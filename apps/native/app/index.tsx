@@ -1,6 +1,37 @@
+// import React, { useEffect, useState } from "react";
+// import { Redirect, useRouter } from "expo-router";
+// import AsyncStorage from "@react-native-async-storage/async-storage";
+
+// export default function InitialRoute() {
+//   const [shouldShowOnboarding, setShouldShowOnboarding] = useState(false);
+//   const router = useRouter();
+
+//   useEffect(() => {
+//     const verifyAppLaunchStatus = async () => {
+//       const hasCompletedOnboarding = await AsyncStorage.getItem("hasLaunched");
+//       const isAuthenticated = await AsyncStorage.getItem("isAuth");
+
+//       if (hasCompletedOnboarding === null) {
+//         setShouldShowOnboarding(true);
+//       } else if (isAuthenticated && hasCompletedOnboarding === "true") {
+//         router.push("/(tabs)/home");
+//       } else {
+//         router.replace("/(auth)/login");
+//       }
+//     };
+
+//     verifyAppLaunchStatus();
+//   }, [router]);
+
+//   return shouldShowOnboarding ? <Redirect href="/onboarding" /> : null;
+// }
+
+
 import React, { useEffect, useState } from "react";
 import { Redirect, useRouter } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { auth } from "../firebase"; // Import Firebase auth
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function InitialRoute() {
   const [shouldShowOnboarding, setShouldShowOnboarding] = useState(false);
@@ -9,7 +40,7 @@ export default function InitialRoute() {
   useEffect(() => {
     const verifyAppLaunchStatus = async () => {
       const hasCompletedOnboarding = await AsyncStorage.getItem("hasLaunched");
-      const isAuthenticated = await AsyncStorage.getItem("isAuth");
+      const isAuthenticated = auth.currentUser ? "true" : null; // Check Firebase auth state
 
       if (hasCompletedOnboarding === null) {
         setShouldShowOnboarding(true);
@@ -20,7 +51,11 @@ export default function InitialRoute() {
       }
     };
 
-    verifyAppLaunchStatus();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      verifyAppLaunchStatus();
+    });
+
+    return () => unsubscribe();
   }, [router]);
 
   return shouldShowOnboarding ? <Redirect href="/onboarding" /> : null;
