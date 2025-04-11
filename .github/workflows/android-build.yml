@@ -22,8 +22,10 @@ jobs:
       - name: Build Android APK with EAS
         env:
           EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
-        run: cd apps/native && eas build -p android --profile preview --non-interactive
+        run: cd apps/native && eas build -p android --profile preview 
       - name: Download APK
+        env:
+          EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
         run: |
           cd apps/native
           mkdir -p artifacts
