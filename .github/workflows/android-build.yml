@@ -22,24 +22,22 @@ jobs:
         run: |
           ls -l google-services.json || { echo "Error: google-services.json not found"; exit 1; }
           jq . google-services.json || { echo "Error: google-services.json is invalid"; exit 1; }
-      - name: Build Android APK
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      - name: Mock build-output.json
         run: |
-          eas build -p android --profile preview --non-interactive --json > build-output.json
+          echo '[{
+            "id": "53251438-1d83-442c-b3f7-e574c43b1bc9",
+            "artifacts": {
+              "buildUrl": "https://expo.dev/artifacts/eas/bgusnBfdkJB5C3CjoEdQcc.apk"
+            }
+          }]' > build-output.json
           cat build-output.json
-          jq -r '.buildDetailsPageUrl' build-output.json
         working-directory: apps/native
       - name: Download Android APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           mkdir -p artifacts
-          BUILD_URL=$(jq -r '.buildDetailsPageUrl' build-output.json)
-          echo "Build URL: $BUILD_URL"
-          BUILD_ID=$(echo $BUILD_URL | grep -o '[0-9a-f-]\{36\}$')
-          echo "Build ID: $BUILD_ID"
-          APK_URL=$(eas build:list --platform android --buildId "$BUILD_ID" --json | jq -r '.[0].artifacts.buildUrl // empty')
+          APK_URL=$(jq -r '.[0].artifacts.buildUrl // empty' build-output.json)
           echo "APK URL: $APK_URL"
           if [ -z "$APK_URL" ]; then echo "Error: No APK URL found"; exit 1; fi
           curl -L -o artifacts/treetracker-wallet-app.apk "$APK_URL"
@@ -51,7 +49,8 @@ jobs:
           ls -la apps/native/artifacts/
           firebase appdistribution:distribute apps/native/artifacts/treetracker-wallet-app.apk \
             --app 1:753452510092:android:0618eb392ee153f6e084a9 \
-            --release-notes "Android build from commit ${{ github.sha }}" \
+            --release-notes "Test build from commit ${{ github.sha }}" \
             --testers "brinkcorp@gmail.com"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
