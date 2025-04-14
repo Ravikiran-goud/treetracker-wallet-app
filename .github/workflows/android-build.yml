@@ -2,7 +2,7 @@ name: Android Build and Distribute
 on:
   push:
     branches: [main]
-    paths: ['apps/native/**', '.github/workflows/android-build.yml']
+    paths: ['apps/native/**', '.github/workflows/android-build.yml', 'eas.json']
   workflow_dispatch:
 jobs:
   build:
@@ -23,11 +23,11 @@ jobs:
           mv google-services.json apps/native/
       - name: Build Android APK with EAS
         env:
-          EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: cd apps/native && eas build -p android --profile preview --non-interactive
       - name: Download APK
         env:
-          EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           cd apps/native
           mkdir -p artifacts
