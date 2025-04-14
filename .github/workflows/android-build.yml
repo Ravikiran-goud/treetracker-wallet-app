@@ -2,7 +2,7 @@ name: Android Build and Distribute
 on:
   push:
     branches: [main]
-    paths: ['apps/native/**', '.github/workflows/android-build.yml', 'eas.json']
+    paths: ['apps/native/**', '.github/workflows/android-build.yml', 'eas.json', 'google-services.json']
   workflow_dispatch:
 jobs:
   build:
@@ -18,10 +18,10 @@ jobs:
       - run: yarn install
       - run: yarn global add expo-cli eas-cli
       - run: echo "$HOME/.yarn/bin" >> $GITHUB_PATH
-      - name: Setup google-services.json
+      - name: Validate google-services.json
         run: |
-          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > google-services.json
-          jq . google-services.json || exit 1
+          ls -l google-services.json || { echo "Error: google-services.json not found"; exit 1; }
+          jq . google-services.json || { echo "Error: google-services.json is invalid"; exit 1; }
       - name: Build Android APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
@@ -44,4 +44,3 @@ jobs:
             --testers "brinkcorp@gmail.com"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-          
