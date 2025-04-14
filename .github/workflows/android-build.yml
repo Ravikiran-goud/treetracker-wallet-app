@@ -25,14 +25,24 @@ jobs:
       - name: Build Android APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: cd apps/native && eas build -p android --profile preview --non-interactive
+        run: |
+          cd apps/native
+          eas build -p android --profile preview --non-interactive --json > build-output.json
+          cat build-output.json
+          jq -r '.buildDetailsPageUrl' build-output.json
+        working-directory: apps/native
       - name: Download Android APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           cd apps/native
           mkdir -p artifacts
-          eas build:list --platform android --status finished --limit 1 --json | jq -r '.[0].artifacts.buildUrl' | xargs curl -o artifacts/treetracker-wallet-app.apk
+          BUILD_URL=$(jq -r '.buildDetailsPageUrl' build-output.json)
+          echo "Build URL: $BUILD_URL"
+          APK_URL=$(eas build:list --platform android --buildId $(echo $BUILD_URL | grep -o '[0-9a-f-]\{36\}$') --json | jq -r '.[0].artifacts.buildUrl')
+          echo "APK URL: $APK_URL"
+          if [ -z "$APK_URL" ]; then echo "Error: No APK URL found"; exit 1; fi
+          curl -L -o artifacts/treetracker-wallet-app.apk "$APK_URL"
       - name: Upload Android APK to Firebase
         run: |
           npm install -g firebase-tools
