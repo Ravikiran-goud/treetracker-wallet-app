@@ -43,14 +43,13 @@ jobs:
           curl -L -o artifacts/treetracker-wallet-app.apk "$APK_URL"
         working-directory: apps/native
       - name: Upload Android APK to Firebase
+        env:
+          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         run: |
           npm install -g firebase-tools
-          firebase use treetracker-wallet-app --token ${{ secrets.FIREBASE_TOKEN }}
           ls -la apps/native/artifacts/
           firebase appdistribution:distribute apps/native/artifacts/treetracker-wallet-app.apk \
             --app 1:753452510092:android:0618eb392ee153f6e084a9 \
             --release-notes "Test build from commit ${{ github.sha }}" \
-            --testers "brinkcorp@gmail.com"
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
-
+            --testers "brinkcorp@gmail.com" \
+            --token "${{ secrets.FIREBASE_TOKEN }}"
