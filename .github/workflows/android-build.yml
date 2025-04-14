@@ -22,15 +22,13 @@ jobs:
         run: |
           echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > google-services.json
           jq . google-services.json || exit 1
-      - name: Mock build-output.json
+      - name: Build Android APK
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
-          echo '[{
-            "id": "53251438-1d83-442c-b3f7-e574c43b1bc9",
-            "artifacts": {
-              "buildUrl": "https://expo.dev/artifacts/eas/bgusnBfdkJB5C3CjoEdQcc.apk"
-            }
-          }]' > build-output.json
+          eas build -p android --profile preview --non-interactive --json > build-output.json
           cat build-output.json
+          jq -r '.[0].artifacts.buildUrl' build-output.json
         working-directory: apps/native
       - name: Download Android APK
         env:
@@ -50,6 +48,6 @@ jobs:
           ls -la apps/native/artifacts/
           firebase appdistribution:distribute apps/native/artifacts/treetracker-wallet-app.apk \
             --app 1:753452510092:android:0618eb392ee153f6e084a9 \
-            --release-notes "Test build from commit ${{ github.sha }}" \
+            --release-notes "Android build from commit ${{ github.sha }}" \
             --testers "brinkcorp@gmail.com" \
             --token "${{ secrets.FIREBASE_TOKEN }}"
