@@ -2,7 +2,7 @@ name: Android Build and Distribute
 on:
   push:
     branches: [main]
-    paths: ['apps/native/**', '.github/workflows/android-build.yml', 'eas.json']
+    paths: ['apps/native/**', '.github/workflows/android-build.yml']
   workflow_dispatch:
 jobs:
   build:
@@ -17,12 +17,14 @@ jobs:
       - run: yarn install
       - run: yarn global add expo-cli eas-cli jq
       - run: echo "$HOME/.yarn/bin" >> $GITHUB_PATH
-      - run: echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > google-services.json
-      - run: mv google-services.json apps/native/
+      - name: Setup google-services.json
+        run: |
+          echo "${{ secrets.GOOGLE_SERVICES_JSON }}" > google-services.json
+          mv google-services.json apps/native/
       - name: Build Android APK with EAS
         env:
           EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
-        run: cd apps/native && eas build -p android --profile preview 
+        run: cd apps/native && eas build -p android --profile preview --non-interactive
       - name: Download APK
         env:
           EAS_TOKEN: ${{ secrets.EAS_TOKEN }}
