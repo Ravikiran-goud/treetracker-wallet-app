@@ -8,36 +8,24 @@
       "versionCode": 1,
       "googleServicesFile": "../../google-services.json"
     },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.app"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
     "extra": {
+      "router": {
+        "origin": false
+      },
       "eas": {
         "projectId": "13087f02-09f4-4a04-9b96-c85a6aeb48ce"
       }
-    }
-  },
-  "ios": {
-    "supportsTablet": true,
-    "bundleIdentifier": "com.example.app"
-  },
-  "android": {
-    "package": "com.example.app",
-    "adaptiveIcon": {
-      "foregroundImage": "./assets/images/adaptive-icon.png",
-      "backgroundColor": "#ffffff"
-    }
-  },
-  "plugins": [
-    "expo-router",
-    "expo-font"
-  ],
-  "experiments": {
-    "typedRoutes": true
-  },
-  "extra": {
-    "router": {
-      "origin": false
-    },
-    "eas": {
-      "projectId": "1821c9a9-d26e-4e8a-8812-f86497886e86"
     }
   }
 }
