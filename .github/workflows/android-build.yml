@@ -44,3 +44,4 @@ jobs:
             --testers "brinkcorp@gmail.com"
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+          
