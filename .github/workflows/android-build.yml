@@ -21,7 +21,7 @@ jobs:
       - name: Setup google-services.json
         run: |
           echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > google-services.json
-          jq . google-services.json || exit 1
+          jq . google-services.json || { echo "Error: google-services.json is invalid"; exit 1; }
       - name: Build Android APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
