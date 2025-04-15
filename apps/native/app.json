@@ -6,7 +6,7 @@
     "android": {
       "package": "org.greenstand.treetrackerwallet",
       "versionCode": 1,
-      "googleServicesFile": "../../google-services.json"
+      "googleServicesFile": "./google-services.json"
     },
     "ios": {
       "supportsTablet": true,
