@@ -12,6 +12,9 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "hooks": {
+        "pre-install": "eas-build-pre-install.sh"
       }
     },
     "production": {
@@ -22,3 +25,4 @@
     "production": {}
   }
 }
+
