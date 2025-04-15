@@ -13,15 +13,6 @@ jobs:
         with: { node-version: 18 }
       - run: npm install -g yarn@1.22.22
       - run: sudo apt-get update && sudo apt-get install -y jq
-      - name: Setup google-services.json
-        run: |
-          echo "Setting GOOGLE_SERVICES_JSON environment variable"
-          echo "GOOGLE_SERVICES_JSON=${{ secrets.GOOGLE_SERVICES_JSON }}" >> $GITHUB_ENV
-          # Verify secret is not empty
-          if [ -z "${{ secrets.GOOGLE_SERVICES_JSON }}" ]; then
-            echo "Error: GOOGLE_SERVICES_JSON secret is empty"
-            exit 1
-          fi
       - run: yarn cache clean
       - run: rm -rf node_modules/ yarn.lock apps/native/node_modules/ apps/native/yarn.lock
       - run: yarn install

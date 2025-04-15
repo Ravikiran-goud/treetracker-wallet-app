@@ -4,7 +4,7 @@ export default {
     version: "1.0.0",
     android: {
       package: "org.greenstand.treetrackerwallet",
-      googleServicesFile: process.env.GOOGLE_SERVICES_JSON || "./google-services.json",
+      googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
     },
     ios: {
       supportsTablet: true,
