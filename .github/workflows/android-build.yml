@@ -76,6 +76,11 @@ jobs:
           jq . apps/native/google-services.json || { echo "Error: google-services.json is invalid JSON"; exit 1; }
           ls -l apps/native/google-services.json
           cat apps/native/google-services.json
+          # Copy to android/app/ for EAS prebuild
+          mkdir -p apps/native/android/app
+          cp apps/native/google-services.json apps/native/android/app/google-services.json
+          echo "Verifying copied google-services.json"
+          ls -l apps/native/android/app/google-services.json
       - run: yarn cache clean
       - run: rm -rf node_modules/ yarn.lock apps/native/node_modules/ apps/native/yarn.lock
       - run: yarn install
