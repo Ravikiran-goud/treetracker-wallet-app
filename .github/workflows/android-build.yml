@@ -18,16 +18,11 @@ jobs:
       - run: yarn install
       - run: yarn global add expo-cli eas-cli
       - run: echo "$HOME/.yarn/bin" >> $GITHUB_PATH
-      - name: Debug environment
+      - name: Verify google-services.json
         run: |
-          echo "Checking GOOGLE_SERVICES_JSON"
-          if [ -z "$GOOGLE_SERVICES_JSON" ]; then
-            echo "GOOGLE_SERVICES_JSON is not set"
-          else
-            echo "GOOGLE_SERVICES_JSON is set (value hidden for security)"
-          fi
-        env:
-          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+          echo "Checking google-services.json"
+          ls -l apps/native/google-services.json || { echo "Error: google-services.json not found"; exit 1; }
+          jq . apps/native/google-services.json || { echo "Error: google-services.json is invalid JSON"; exit 1; }
       - name: Build Android APK
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
