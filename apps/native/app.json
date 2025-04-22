@@ -3,6 +3,7 @@
     "name": "TreeTracker Wallet",
     "slug": "treetracker-wallet-app",
     "version": "1.0.0",
+    "owner": "greenstand-treetrackerwalletapp",
     "android": {
       "package": "org.greenstand.treetrackerwallet",
       "googleServicesFile": "./google-services.json"
